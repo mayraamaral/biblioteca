@@ -1,0 +1,12 @@
+services:
+  web:
+    build: ./frontend
+    environment:
+      DB_HOST: db
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?}
+      MYSQL_USER: ${MYSQL_USER:?}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - db

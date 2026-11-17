@@ -1,5 +1,7 @@
 # Sistema de Biblioteca
 
+Para operar o banco pelo navegador, consulte a [documentação do frontend da biblioteca](frontend/README.md). A interface utiliza o mesmo volume e as credenciais do `.env` da raiz.
+
 Trabalho da disciplina de Modelagem de Banco de Dados do curso de Engenharia de Software.
 
 ## Como rodar
