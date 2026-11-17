@@ -1,6 +1,6 @@
-# Sistema de Biblioteca — Banco de Dados Relacional
+# Sistema de Biblioteca
 
-Trabalho da disciplina de Modelagem de Banco de Dados do curso de Engenharia de Software.    Separamos o cadastro do livro do registro da cópia física: duas pessoas podem retirar o mesmo título se levarem exemplares diferentes. O empréstimo registra o número da cópia e o código do leitor; nome, CPF e contato ficam em `Usuario`.
+Trabalho da disciplina de Modelagem de Banco de Dados do curso de Engenharia de Software.
 
 ## Como rodar
 
@@ -51,7 +51,8 @@ Emprestimo (numero_emprestimo, numero_exemplar, codigo_usuario, data_emprestimo,
   numero_exemplar referencia Exemplar (numero_registro)
   codigo_usuario referencia Usuario (codigo)
 ```
-
+## Decisões de arquitetura
+Separamos o cadastro do livro do registro da cópia física: duas pessoas podem retirar o mesmo título se levarem exemplares diferentes. O empréstimo registra o número da cópia e o código do leitor; nome, CPF e contato ficam em `Usuario`.
 ## Dicionário de dados
 
 **PRI** indica participação na chave primária; **EST**, chave estrangeira; **CAN**, chave candidata alternativa com `UNIQUE`. Os identificadores são informados nos `INSERT`s. Em `LivroAutor`, o par de códigos identifica a linha: um livro pode ter vários autores e cada autor pode aparecer em vários livros.
