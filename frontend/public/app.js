@@ -3,14 +3,14 @@ import {models, fields, keys, labels, states} from './model.js';
 const $ = s=>document.querySelector(s);
 const el = (tag,text)=>{const n=document.createElement(tag); if(text!=null)n.textContent=text; return n;};
 const button = (text,fn)=>{const n=el('button',text); n.onclick=fn; return n;};
-const targets={codigo_livro:'Livro',codigo_autor:'Autor',codigo_editora:'Editora',codigo_usuario:'Usuario',numero_exemplar:'Exemplar'};
+const targets={id_livro:'Livro',id_autor:'Autor',id_editora:'Editora',id_usuario:'Usuario',id_exemplar:'Exemplar'};
 let data, table='Livro', editing;
 function display(k,v){
   if(v==null)return k==='data_devolucao'?'Em aberto':'—';
   const t=targets[k];
   if(!t)return String(v);
   const r=data[t].find(x=>x[keys(t)[0]]===v);
-  return r?`${v} · ${r.nome || r.titulo || display('codigo_livro',r.codigo_livro)}`:String(v);
+  return r?`${v} · ${r.nome || r.titulo || display('id_livro',r.id_livro)}`:String(v);
 }
 async function refresh(msg=''){
   const res=await fetch('/api/acervo',{cache:'no-store'});
@@ -23,7 +23,7 @@ async function save(action,body){
   await refresh('Operação registrada.');
 }
 async function quick(action,row){
-  if(!confirm(action==='excluir'?'Excluir este registro?':`Confirmar devolução do exemplar ${row.numero_exemplar}?`))return;
+  if(!confirm(action==='excluir'?'Excluir este registro?':`Confirmar devolução do exemplar ${row.id_exemplar}?`))return;
   try{await save(action,row);}catch(e){$('#message').textContent=e.message;}
 }
 function render(){
@@ -38,8 +38,8 @@ function render(){
     const texts=cols.map(k=>display(k,row[k]));
     if(loan)texts.push(display('data_devolucao',row.data_devolucao));
     if(book){
-      const copies=data.Exemplar.filter(x=>x.codigo_livro===row.codigo);
-      texts.push(data.LivroAutor.filter(x=>x.codigo_livro===row.codigo).map(x=>display('codigo_autor',x.codigo_autor)).join('; ')||'—',`${copies.filter(x=>x.status==='Disponível').length} / ${copies.length}`);
+      const copies=data.Exemplar.filter(x=>x.id_livro===row.id);
+      texts.push(data.LivroAutor.filter(x=>x.id_livro===row.id).map(x=>display('id_autor',x.id_autor)).join('; ')||'—',`${copies.filter(x=>x.status==='Disponível').length} / ${copies.length}`);
     }
     if(!texts.join(' ').toLocaleLowerCase('pt-BR').includes($('#search').value.trim().toLocaleLowerCase('pt-BR')))continue;
     const tr=el('tr'), actions=el('td');texts.forEach(v=>tr.append(el('td',v)));
@@ -54,10 +54,10 @@ function form(row){
   for(const k of fields(table)){
     const label=el('label',labels[k]),t=targets[k]; let n;
     if(t || k==='status'){
-      n=el('select');const list=t?data[t].filter(x=>k!=='numero_exemplar'||x.status==='Disponível'||row?.numero_exemplar===x.numero_registro).map(x=>[x[keys(t)[0]],display(k,x[keys(t)[0]])]):states.map(s=>[s,s]);
+      n=el('select');const list=t?data[t].filter(x=>k!=='id_exemplar'||x.status==='Disponível'||row?.id_exemplar===x.numero_registro).map(x=>[x[keys(t)[0]],display(k,x[keys(t)[0]])]):states.map(s=>[s,s]);
       if(t)n.add(new Option('Selecione…','')); for(const [v,text] of list)n.add(new Option(text,v));
     }else{
-      n=el('input');n.type=k.startsWith('data_')?'date':/^(codigo|numero|ano)/.test(k)?'number':k==='email'?'email':'text';
+      n=el('input');n.type=k.startsWith('data_')?'date':/^(id$|id_|numero|ano)/.test(k)?'number':k==='email'?'email':'text';
       if(k==='cpf'){n.pattern='[0-9]{11}';n.maxLength=11;}
       if(k==='data_emprestimo')n.valueAsDate=new Date();
     }
@@ -67,12 +67,12 @@ function form(row){
   }
   if(table==='Livro'){
     const group=el('fieldset');group.append(el('legend','Autores da obra'));
-    const current=new Set(data.LivroAutor.filter(v=>v.codigo_livro===row?.codigo).map(v=>v.codigo_autor));
+    const current=new Set(data.LivroAutor.filter(v=>v.id_livro===row?.id).map(v=>v.id_autor));
     const list=el('div');list.className='max-h-40 overflow-y-auto rounded-md border p-2';
     for(const a of data.Autor){
       const label=el('label'),box=el('input');label.className='grid-cols-[auto_1fr] items-center py-1';
-      box.type='checkbox';box.name='autores';box.value=a.codigo;box.checked=current.has(a.codigo);
-      label.append(box, `${a.nome} (${a.codigo})`);list.append(label);
+      box.type='checkbox';box.name='autores';box.value=a.id;box.checked=current.has(a.id);
+      label.append(box, `${a.nome} (${a.id})`);list.append(label);
     }
     group.append(list,el('small','Marque os autores e coautores. Se faltar um nome, cadastre-o na aba Autores.'));
     $('#inputs').append(group);

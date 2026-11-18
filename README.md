@@ -39,19 +39,19 @@ docker compose up -d
 ## Esquema relacional
 
 ```plaintext
-Autor (codigo, nome)
-Editora (codigo, nome)
-Usuario (codigo, nome, cpf, telefone, email)
-Livro (codigo, titulo, ano_publicacao, codigo_editora)
-  codigo_editora referencia Editora (codigo)
-LivroAutor (codigo_livro, codigo_autor)
-  codigo_livro referencia Livro (codigo)
-  codigo_autor referencia Autor (codigo)
-Exemplar (numero_registro, codigo_livro, status)
-  codigo_livro referencia Livro (codigo)
-Emprestimo (numero_emprestimo, numero_exemplar, codigo_usuario, data_emprestimo, data_devolucao_prevista)
-  numero_exemplar referencia Exemplar (numero_registro)
-  codigo_usuario referencia Usuario (codigo)
+Autor (id, nome)
+Editora (id, nome)
+Usuario (id, nome, cpf, telefone, email)
+Livro (id, titulo, ano_publicacao, id_editora)
+  id_editora referencia Editora (id)
+LivroAutor (id_livro, id_autor)
+  id_livro referencia Livro (id)
+  id_autor referencia Autor (id)
+Exemplar (numero_registro, id_livro, status)
+  id_livro referencia Livro (id)
+Emprestimo (numero_emprestimo, id_exemplar, id_usuario, data_emprestimo, data_devolucao_prevista)
+  id_exemplar referencia Exemplar (numero_registro)
+  id_usuario referencia Usuario (id)
 ```
 ## Decisões de arquitetura
 Separamos o cadastro do livro do registro da cópia física: duas pessoas podem retirar o mesmo título se levarem exemplares diferentes. O empréstimo registra o número da cópia e o código do leitor; nome, CPF e contato ficam em `Usuario`.
@@ -63,21 +63,21 @@ Separamos o cadastro do livro do registro da cópia física: duas pessoas podem 
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
-| codigo | INT | Não | Identificador do autor | Inteiro | X | | |
+| id | INT | Não | Identificador do autor | Inteiro | X | | |
 | nome | VARCHAR(100) | Não | Nome de autoria | Texto de até 100 caracteres | | | |
 
 ### Editora
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
-| codigo | INT | Não | Identificador da editora | Inteiro | X | | |
+| id | INT | Não | Identificador da editora | Inteiro | X | | |
 | nome | VARCHAR(100) | Não | Nome da editora | Texto de até 100 caracteres | | | |
 
 ### Usuario
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
-| codigo | INT | Não | Identificador do leitor | Inteiro | X | | |
+| id | INT | Não | Identificador do leitor | Inteiro | X | | |
 | nome | VARCHAR(100) | Não | Nome do leitor | Texto de até 100 caracteres | | | |
 | cpf | CHAR(11) | Não | CPF sem pontuação; preserva zeros à esquerda | 11 dígitos | | | X |
 | telefone | VARCHAR(15) | Sim | Telefone de contato | Até 15 caracteres | | | |
@@ -87,24 +87,24 @@ Separamos o cadastro do livro do registro da cópia física: duas pessoas podem 
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
-| codigo | INT | Não | Identificador do livro | Inteiro | X | | |
+| id | INT | Não | Identificador do livro | Inteiro | X | | |
 | titulo | VARCHAR(150) | Não | Título da obra | Texto de até 150 caracteres | | | |
 | ano_publicacao | INT | Não | Ano da edição cadastrada | Ano em número inteiro | | | |
-| codigo_editora | INT | Não | Editora da edição | Editora.codigo | | X | |
+| id_editora | INT | Não | Editora da edição | Editora.id | | X | |
 
 ### LivroAutor
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
-| codigo_livro | INT | Não | Livro do vínculo de autoria | Livro.codigo | X | X | |
-| codigo_autor | INT | Não | Autor do livro | Autor.codigo | X | X | |
+| id_livro | INT | Não | Livro do vínculo de autoria | Livro.id | X | X | |
+| id_autor | INT | Não | Autor do livro | Autor.id | X | X | |
 
 ### Exemplar
 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
 | numero_registro | INT | Não | Registro da cópia física | Inteiro | X | | |
-| codigo_livro | INT | Não | Livro ao qual a cópia pertence | Livro.codigo | | X | |
+| id_livro | INT | Não | Livro ao qual a cópia pertence | Livro.id | | X | |
 | status | VARCHAR(20) | Não | Situação atual da cópia | Disponível (padrão), Emprestado, Danificado ou Manutenção | | | |
 
 ### Emprestimo
@@ -112,7 +112,7 @@ Separamos o cadastro do livro do registro da cópia física: duas pessoas podem 
 | ATRIBUTO | TIPO | NULO | DESCRIÇÃO | DOMÍNIO | PRI | EST | CAN |
 |---|---|---|---|---|---|---|---|
 | numero_emprestimo | INT | Não | Identificador da retirada | Inteiro | X | | |
-| numero_exemplar | INT | Não | Cópia retirada | Exemplar.numero_registro | | X | |
-| codigo_usuario | INT | Não | Leitor responsável | Usuario.codigo | | X | |
+| id_exemplar | INT | Não | Cópia retirada | Exemplar.numero_registro | | X | |
+| id_usuario | INT | Não | Leitor responsável | Usuario.id | | X | |
 | data_emprestimo | DATE | Não | Dia da retirada | Data | | | |
 | data_devolucao_prevista | DATE | Não | Prazo para devolver a cópia | Data igual ou posterior à retirada | | | |

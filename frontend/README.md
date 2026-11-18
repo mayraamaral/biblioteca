@@ -29,6 +29,6 @@ Para parar os dois serviços mantendo os cadastros, use `docker compose -f docke
 
 ### Registro das devoluções
 
-O modelo da disciplina guarda apenas o prazo. Ao iniciar, o serviço cria, se necessário, a tabela auxiliar `DevolucaoWeb (numero_emprestimo, data_devolucao)` no mesmo banco. O número é uma chave primária manual e também referencia `Emprestimo`. A carga inicial considera todas as retiradas em aberto. A retirada e a devolução atualizam a situação da cópia na mesma transação da operação. Nenhum script do seed precisa ser executado outra vez.
+O modelo da disciplina guarda apenas o prazo. Ao iniciar, o serviço cria, se necessário, a tabela auxiliar `DevolucaoWeb (id_emprestimo, data_devolucao)` no mesmo banco. `id_emprestimo` é a chave primária e referencia `Emprestimo.numero_emprestimo`. A carga inicial considera todas as retiradas em aberto. A retirada e a devolução atualizam a situação da cópia na mesma transação da operação. Nenhum script do seed precisa ser executado outra vez.
 
 As exclusões respeitam as referências do banco. Para corrigir uma autoria, remova o vínculo e cadastre o par correto. A interface preserva empréstimos já registrados.
